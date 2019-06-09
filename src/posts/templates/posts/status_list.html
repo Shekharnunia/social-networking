@@ -4,41 +4,45 @@
 	<div class="container mt-5">
       <div class="row">
         <div class="col-md-6 offset-md-3">
-			<form action="{% url 'posts:create' %}" method="POST" novalidate>
-				{% csrf_token %}
-				{{ form.as_p }}
-				<button class="btn btn-primary">Submit</button>
-			</form>
-			<hr>
+        	{% if form %}
+				<form action="{% url 'posts:create' %}" method="POST" novalidate>
+					{% csrf_token %}
+					{{ form.as_p }}
+					<button class="btn btn-primary">Submit</button>
+				</form>        		
+				<hr>
+        	{% endif %}
 			{% for stat in status %}
-			<div class="card">
-			  <div class="card-body">
-			    <blockquote class="blockquote mb-0">
-			      <p>{{ stat.content }}.</p>
-			      {{ stat.timestamp }}
-			      <footer class="blockquote-footer">{{ stat.user }}</footer>
-			    </blockquote>
-				<form action="{% url 'posts:like' %}" method="post">
-					{% csrf_token %}
-					{% if request.user in stat.like.all %}
-					  {{ stat.like.all.count }}<button type="submit" id="like" name="status_id" value="{{ stat.id }}" class="btn"><i class="fas fa-heart" aria-hidden="true"></i></button>
-					{% else %}
-					  {{ stat.like.all.count }}<button type="submit" id="like" name="status_id" value="{{ stat.id }}" class="btn"><i class="far fa-heart" aria-hidden="true"></i></button>
+				<div class="card">
+				  <div class="card-body">
+				    <blockquote class="blockquote mb-0">
+				      <p>{{ stat.content }}.</p>
+				      {{ stat.timestamp }}
+				      <footer class="blockquote-footer">{{ stat.user }}</footer>
+				    </blockquote>
+					<form action="{% url 'posts:like' %}" method="post">
+						{% csrf_token %}
+						{% if request.user in stat.like.all %}
+						  {{ stat.like.all.count }}<button type="submit" id="like" name="status_id" value="{{ stat.id }}" class="btn"><i class="fas fa-heart" aria-hidden="true"></i></button>
+						{% else %}
+						  {{ stat.like.all.count }}<button type="submit" id="like" name="status_id" value="{{ stat.id }}" class="btn"><i class="far fa-heart" aria-hidden="true"></i></button>
+						{% endif %}
+					</form>
+					{% if comment_form %}
+						<form  method="POST" action="{% url 'posts:comment' %}"novalidate>
+							{% csrf_token %}
+							{{ comment_form.as_p }}
+							<button class="btn btn-primary" name="status_id" value="{{ stat.id }}">Submit</button>
+						</form>
 					{% endif %}
-				</form>
-				<form  method="POST" action="{% url 'posts:comment' %}"novalidate>
-					{% csrf_token %}
-					{{ comment_form.as_p }}
-					<button class="btn btn-primary" name="status_id" value="{{ stat.id }}">Submit</button>
-				</form>
-				{% for comment in stat.statuscomment_set.all %}
-					<hr>
-					<p>Comment : {{ comment.comment }}</p>
-					<p>User : {{ comment.user }}</p>
-				{% endfor %}
-			  </div>
-			</div>	
-			<br>
+					{% for comment in stat.statuscomment_set.all %}
+						<hr>
+						<p>Comment : {{ comment.comment }}</p>
+						<p>User : {{ comment.user }}</p>
+					{% endfor %}
+				  </div>
+				</div>	
+				<br>
 			{% endfor %}
         </div>
       </div>

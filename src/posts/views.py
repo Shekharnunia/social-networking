@@ -29,8 +29,18 @@ class StatusListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(StatusListView, self).get_context_data(**kwargs)
-        context['form'] = StatusForm()
-        context['comment_form'] = StatusCommentForm()
+        user = self.request.user
+        user_plan = user.userplan.plan
+        if user.statuscomment_set.count() < user_plan.status:
+            context['form'] = StatusForm()
+        else:
+            message = ("Your status creation limit for this plan has been finished.")
+            messages.warning(self.request, message)
+        if user.statuscomment_set.count() < user_plan.comments:
+            context['comment_form'] = StatusCommentForm()
+        else:
+            message = ("Your comment creation limit for this plan has been finished.")
+            messages.warning(self.request, message)
         return context
 
     def get_queryset(self):
@@ -45,8 +55,6 @@ class StatusLikeView(RedirectView):
         is_liked = True
         user = self.request.user
         user_plan = user.userplan.plan
-        print(user.status_like.count())
-        print(user_plan.likes)
         if status.like.filter(id=self.request.user.id).exists():
             status.like.remove(self.request.user)
             message = ("You unliked this status successfully.")
