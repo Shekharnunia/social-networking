@@ -6,9 +6,11 @@ from plans.models import Plan
 class Status(models.Model):
     content = models.TextField()
     like = models.ManyToManyField(settings.AUTH_USER_MODEL)
-    plan = models.ManyToManyField(Plan)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='status_like')
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.username
 
 
 class StatusComment(models.Model):
@@ -16,3 +18,6 @@ class StatusComment(models.Model):
     comment = models.CharField(max_length=250)
     timestamp = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username
