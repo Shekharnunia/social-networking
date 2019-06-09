@@ -43,11 +43,18 @@ class StatusLikeView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         status = get_object_or_404(Status, pk=self.request.POST.get('status_id'))
         is_liked = True
+        user = self.request.user
+        user_plan = user.userplan.plan
+        print(user.status_like.count())
+        print(user_plan.likes)
         if status.like.filter(id=self.request.user.id).exists():
-            print('in')
             status.like.remove(self.request.user)
             message = ("You unliked this status successfully.")
             messages.success(self.request, message)
+            return status.get_absolute_url()
+        elif user.status_like.count() >= user_plan.likes:
+            message = ("Your like limit for this plan has finished.")
+            messages.warning(self.request, message)
             return status.get_absolute_url()
         else:
             message = ("You liked this status successfully.")
