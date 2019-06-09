@@ -11,6 +11,9 @@ class Plan(models.Model):
     )
     slug = models.SlugField()
     plan = models.CharField(choices=MEMBERSHIP_CHOICES, max_length=5, default='Plan1')
+    status = models.PositiveIntegerField(default=0)
+    likes = models.PositiveIntegerField(default=0)
+    comments = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.plan
