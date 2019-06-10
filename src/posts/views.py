@@ -1,4 +1,6 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import CreateView, ListView, RedirectView
 
@@ -6,7 +8,7 @@ from .forms import StatusForm, StatusCommentForm
 from .models import Status, StatusComment
 
 
-class CreateStatusView(CreateView):
+class CreateStatusView(LoginRequiredMixin, CreateView):
     """Basic CreateView implementation to create new status."""
     model = Status
     fields = ['content']
@@ -21,7 +23,7 @@ class CreateStatusView(CreateView):
         return redirect(status.get_absolute_url())
 
 
-class StatusListView(ListView):
+class StatusListView(LoginRequiredMixin, ListView):
     """Basic ListView implementation to call the published articles list."""
     model = Status
     paginate_by = 5
@@ -47,7 +49,7 @@ class StatusListView(ListView):
         return Status.objects.order_by('-timestamp')
 
 
-class StatusLikeView(RedirectView):
+class StatusLikeView(LoginRequiredMixin, RedirectView):
     model = Status
 
     def get_redirect_url(self, *args, **kwargs):
@@ -71,6 +73,7 @@ class StatusLikeView(RedirectView):
             return status.get_absolute_url()
 
 
+@login_required
 def comment(request):
     if request.method == 'POST':
         form = StatusCommentForm(request.POST)

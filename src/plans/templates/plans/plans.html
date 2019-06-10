@@ -38,19 +38,22 @@
 <div class="container mt-5">
   <div class="card-deck mb-3 text-center">
   	{% for plan in plans %}
-	    <div class="card mb-4 shadow-sm">
-	      <div class="card-header">
-	        <h4 class="my-0 font-weight-normal">{{ plan.plan }}</h4>
-	      </div>
-	      <div class="card-body">
-	        <ul class="list-unstyled mt-3 mb-4">
-	          <li><b>Status Creation allowed :</b> {{ plan.status }}</li>
-	          <li><b>Comments Creation allowed :</b>{{ plan.comments }}</li>
-	          <li><b>Likes Creation allowed :</b>{{ plan.likes }}</li>
-	        </ul>
-	        <button type="button" class="btn btn-lg btn-block btn-outline-primary">Sign up</button>
-	      </div>
-	    </div>
+  		<form method="POST" action="{% url 'plans:plans' %}">
+		    <div class="card mb-4 shadow-sm">
+		      <div class="card-header">
+		        <h4 class="my-0 font-weight-normal">{{ plan.plan }}</h4>
+		      </div>
+		      <div class="card-body">
+		        <ul class="list-unstyled mt-3 mb-4">
+		          <li><b>Status Creation allowed :</b> {{ plan.status }}</li>
+		          <li><b>Comments Creation allowed :</b>{{ plan.comments }}</li>
+		          <li><b>Likes Creation allowed :</b>{{ plan.likes }}</li>
+		        </ul>
+		        {% csrf_token %}
+		        <button type="submit" name="plan" value="{{ plan.plan }}" class="btn btn-lg btn-block btn-outline-primary">Sign up</button>
+		      </div>
+		    </div>
+	    </form>
     {% endfor %}
   </div>
 </div>
