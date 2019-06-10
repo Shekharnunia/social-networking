@@ -1,11 +1,38 @@
 from django.contrib import messages
+from django.contrib.auth import(authenticate, login, logout)
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import CreateView, ListView, RedirectView
 
 from .forms import StatusForm, StatusCommentForm
 from .models import Status, StatusComment
+from plans.models import UserPlan, Plan
+
+
+def register(request):
+    if not request.user.is_authenticated:
+        if request.method == 'POST':
+            form = UserCreationForm(request.POST)
+            if form.is_valid():
+                form.save()
+                username = form.cleaned_data.get('username')
+                raw_password = form.cleaned_data.get('password1')
+                user = authenticate(username=username, password=raw_password)
+                login(request, user)
+                userplan = UserPlan.objects.get(user=user)
+                form_plan = Plan.objects.get(plan='Plan1')
+                userplan.plan = form_plan
+                userplan.save()
+                messages.success(request, 'Your account successfully created')
+                return redirect(('plans:plans'))
+        else:
+            form = UserCreationForm()
+        return render(request, 'registration/register.html', {'form': form})
+    else:
+        return redirect(reverse('posts:list'))
 
 
 class CreateStatusView(LoginRequiredMixin, CreateView):

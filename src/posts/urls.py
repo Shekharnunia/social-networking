@@ -8,4 +8,3 @@ urlpatterns = [
     path('like/', views.StatusLikeView.as_view(), name='like'),
     path('comment/', views.comment, name='comment'),
 ]
-

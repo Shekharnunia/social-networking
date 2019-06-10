@@ -3,6 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
+from posts import views
 
 
 urlpatterns = [
@@ -10,6 +11,7 @@ urlpatterns = [
     path('plan/', include('plans.urls')),
     path('', include('posts.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/register/', views.register, name='register'),
 ]
 
 if settings.DEBUG:
